@@ -1,6 +1,7 @@
 const catchError = require('../utils/catchError');
 const User = require('../models/User');
-const { verifyJwt } = require('../utils/veriryJWT');
+const jwt = require('jsonwebtoken')
+const bcrypt = require("bcrypt")
 
 const getAll = catchError(async(req, res) => {
     const results = await User.findAll();
@@ -34,25 +35,30 @@ const update = catchError(async(req, res) => {
     return res.json(result[1][0]);
 });
 
-const login = catchError(async(req, res) => {
-    const {email, password} = req.body
-
-    const user = await User.findOne({ where: {email}})
-    if (!user) return res.status(404).json({error: 'user not found'})
-
+const login = catchError(async (req, res) => {
+    const { email, password } = req.body
+  
+    const user = await User.findOne({ where: { email } })
+    if (!user) return res.status(401).json({ error: 'Invalid credentials' })
+  
+    const isValid = await bcrypt.compare(password, user.password)
+    if (!isValid) return res.status(401).json({ error: 'Invalid credentials' })
+    //validar el password
+  
     const token = jwt.sign(
-        {user},
-        procee.env.TOKEN_SECRET,
-        {expiresIn: "1d"})
-         
-
-    return res.json(user)
-})
+      { user },
+      process.env.TOKEN_SECRET,
+      { expiresIn: "1d" }
+    )
+    return res.json({user: user, token: token })
+  
+  })
 
 
 module.exports = {
     getAll,
     create,
     remove,
-    update
+    update,
+    login
 }
