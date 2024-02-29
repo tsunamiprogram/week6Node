@@ -14,7 +14,7 @@ let categoryId
 beforeAll(async () => {
   const user = {
     email: "fernando@gmail.com",
-    password: 'fernando1234'
+    password: '1234'
   }
 
   const res = await request(app)
@@ -50,5 +50,6 @@ test("Delete -> 'URL_BASE/:id', should return status code 204", async () => {
   const res = await request(app)
     .delete(`${URL_BASE}/${categoryId}`)
     .set('Authorization', `Bearer ${TOKEN}`)
+
   expect(res.status).toBe(204)
 })

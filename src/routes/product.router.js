@@ -10,7 +10,7 @@ routerProduct.route('/')
 
 routerProduct.route('/:id')
     .get(getOne)
-    .delete(remove)
-    .put(update);
+    .delete(verifyJWT, remove)
+    .put(verifyJWT, update);
 
 module.exports = routerProduct;

@@ -1,5 +1,7 @@
 const request = require("supertest")
 const app = require("../app")
+require("../models")
+
 
 const URL_BASE = '/users'
 let TOKEN
@@ -9,21 +11,20 @@ const user = {
   firstName: 'Rene',
   lastName: 'Rivera',
   email: 'rene@gmail.com',
-  password: '123',
+  password: '1234',
   phone: '+231321'
 }
 
 beforeAll(async () => {
     const user = {
         email: "fernando@gmail.com",
-        password: '123'
+        password: '1234'
     }
     const res = await request(app)
     .post(`${URL_BASE}/login`)
     .send(user)
 
-    TOKEN = res.body.TOKEN
-
+    TOKEN = res.body.token
 
 })
 
@@ -55,12 +56,11 @@ async () => {
 test("Put -> 'URL_BASE/:id', should return status code 200, res.body to be defined and res.body.firstname = 'frednerys'", 
 async() => {
     const res = await request(app)
-    .post(`${URL_BASE}/${userId}`)
-    .send(user)
-    .send({firstName: "frednerys"})
-    .set("Authorization", `bearer ${TOKEN}`)
+    .put(`${URL_BASE}/${userId}`)
+    .send({ firstName: "frednerys" })
+    .set("Authorization", `Bearer ${TOKEN}`)
 
-    expect(res.statusCode).toBe(200)
+    expect(res.status).toBe(200)
     expect(res.body).toBeDefined()
     expect(res.body.firstName).toBe('frednerys')
 })
@@ -69,7 +69,7 @@ test("Post -> 'URL_BASE/login', should return status code 200, res.body to be de
 async() => {
     const userLogin = {
         email: "rene@gmail.com",
-        password: "123"
+        password: "1234"
     }
     const res = await request(app)
     .post(`${URL_BASE}/login`)
@@ -95,7 +95,7 @@ expect(res.statusCode).toBe(401)
 })
 
 test("Delete -> 'URL_BASE/:id', should return status code 204", 
-async () => {
+async() => {
     const res = await request(app)
     .delete(`${URL_BASE}/${userId}`)
     .set('Authorization', `Bearer ${TOKEN}`)

@@ -21,5 +21,5 @@ const remove = catchError(async(req, res) => {
 module.exports = {
     getAll,
     create,
-    remove,
+    remove
 }
