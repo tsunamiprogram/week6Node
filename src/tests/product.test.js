@@ -12,7 +12,7 @@ const URL_BASE = '/products'
 let TOKEN
 let category
 let product
-// let productId
+let productId
 
 beforeAll(async() => {
 
@@ -44,6 +44,8 @@ test("Post -> 'URL_BASE', should return status code 201, res.body to be defined 
     .send(product)
     .set('Authorization', `Bearer ${TOKEN}`)
 
+    productId = res.body.id
+
     expect(res.status).toBe(201)
     expect(res.body).toBeDefined()
     expect(res.body.title).toBe(product.title)
@@ -60,6 +62,47 @@ async() => {
     expect(res.body[0].category).toBeDefined()
     expect(res.body[0].category.id).toBe(category.id)
 
-    await category.destroy()
+})
 
+test("Get -> 'URL_BASE', should return status code 200, res.body to be defined, and res.body.length === 1, res.body[0].categoryId === category.id, and res.body[0].category.id === category.id", 
+async () => {
+    const res = await request(app)
+    .get(`${URL_BASE}?category=${category.id}`)
+    expect(res.status).toBe(200)
+    expect(res.body).toBeDefined()
+    expect(res.body).toHaveLength(1)
+
+    expect(res.body[0].categoryId).toBeDefined()
+    expect(res.body[0].categoryId).toBe(category.id)
+
+    expect(res.body[0].category).toBeDefined()
+    expect(res.body[0].category.id).toBe(category.id)
+})
+
+test("Get -> 'URL_BASE/:productId', should return status code 200, res.body to be defined, res.body.title === product.title, res.body.category.id to be defined, and res.body.category.id === category.id", 
+async () => {
+    const res = await request(app)
+    .get(`${URL_BASE}/${productId}`)
+
+    expect(res.status).toBe(200)
+    expect(res.body).toBeDefined()
+    expect(res.body.title).toBe(product.title)
+
+    expect(res.body.category.id).toBeDefined()
+    expect(res.body.category.id).toBe(category.id)
+    
+})
+
+test("PUT -> 'URL_BASE/productId', should return status code 200, res.body to be defined and res.body.title === 'Ropa'", 
+async() => {
+    const res = await request(app)
+    .put(`${URL_BASE}/${productId}`)
+    .send({ title: "Ropa"})
+    .set('Authorization', `Bearer ${TOKEN}`)
+
+    expect(res.status).toBe(200)
+    expect(res.body).toBeDefined()
+    expect(res.body.title).toBe('Ropa')
+
+    await category.destroy()
 })
