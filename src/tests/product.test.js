@@ -4,7 +4,6 @@ const app = require('../app')
 const Category = require('../models/Category')
 const Product = require("../models/Product")
 
-
 //get publico y los demas son privados
 
 const URL_BASE_USER = '/users/login'
@@ -104,5 +103,15 @@ async() => {
     expect(res.body).toBeDefined()
     expect(res.body.title).toBe('Ropa')
 
+    
+})
+
+test("DELETE -> 'URL_BASE/:productId', should return status code 204", 
+async () => {
+    const res = await request(app)
+    .delete(`${URL_BASE}/${productId}`)
+    .set('Authorization', `Bearer ${TOKEN}`)
+
+    expect(res.status).toBe(204)
     await category.destroy()
 })

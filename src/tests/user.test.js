@@ -85,7 +85,7 @@ test("Post -> 'URL_BASE/login', should return status code 401",
 async() => {
     const userLogin = {
         email: "rene@gmail",
-        password: "1234"
+        password: "invalid password"
     }
     const res = await request(app)
     .post(`${URL_BASE}/login`)
